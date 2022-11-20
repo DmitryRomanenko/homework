@@ -1,9 +1,6 @@
 import React from 'react';
-
 import { useSelector } from 'react-redux';
-
 import { selectFilteredTodo, editTodo, addTodo } from '../store/slices/todoSlice';
-
 import TodoItem from '../components/TodoItem';
 import Filters from '../components/Filters';
 import Sort from '../components/Sort';
@@ -15,44 +12,45 @@ const MainPage = () => {
   const todo = useSelector(selectFilteredTodo);
   const [modalAdd, setAddModal] = React.useState(false);
   const [modalEdit, setEditModal] = React.useState(false);
-  const [id, setId] = React.useState(true);
+  const [id, setId] = React.useState('');
+
+  const openModal = () => {
+    if (modalAdd) {
+      return <Modal modalAdd={modalAdd} text='Add' setAddModal={setAddModal} modalChange={addTodo} />;
+    }
+    if (modalEdit) {
+      return <Modal id={id} modalEdit={modalEdit} text='Edit' setEditModal={setEditModal} modalChange={editTodo} />;
+    }
+    return null;
+  };
+
   return (
     <>
-      <section className="todo">
-        <div className="container">
+      <section className='todo'>
+        <div className='container'>
           <Header />
-          <div className="todo__wrapper">
-            <div className="todo__head">
-              <div className="todo__options">
-                <div className="todo__head-text">Filter by:</div>
+          <div className='todo__wrapper'>
+            <div className='todo__head'>
+              <div className='todo__options'>
+                <div className='todo__head-text'>Filter by:</div>
                 <Filters todo={todo} />
               </div>
-              <div className="todo__options">
-                <div className="todo__head-text">Sort by:</div>
+              <div className='todo__options'>
+                <div className='todo__head-text'>Sort by:</div>
                 <Sort />
               </div>
             </div>
-            <div className="todo__body">
+            <div className='todo__body'>
               <TodoItem todo={todo} setEditModal={setEditModal} setId={setId} />
             </div>
           </div>
-          <div onClick={() => setAddModal(true)} className="todo__add-btn">
-            <i className="fa-solid fa-circle-plus"></i>
-          </div>
+          <button type='button' onClick={() => setAddModal(true)} className='todo__add-btn'>
+            <i className='fa-solid fa-circle-plus' />
+          </button>
         </div>
       </section>
       <ButtonToTop />
-      {modalAdd ? (
-        <Modal modalAdd={modalAdd} text={'Add'} setAddModal={setAddModal} modalChange={addTodo} />
-      ) : modalEdit ? (
-        <Modal
-          id={id}
-          modalEdit={modalEdit}
-          text={'Edit'}
-          setEditModal={setEditModal}
-          modalChange={editTodo}
-        />
-      ) : null}
+      {openModal()}
     </>
   );
 };

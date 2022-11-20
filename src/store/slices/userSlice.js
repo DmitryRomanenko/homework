@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+
 const initialState = {
   user: {
     userName: null,
@@ -15,14 +16,7 @@ const userSlice = createSlice({
         state.user.userName = action.payload.userName;
         state.user.userPassword = action.payload.userPassword;
       },
-      prepare: ({ userName, userPassword }) => {
-        return {
-          payload: {
-            userName,
-            userPassword,
-          },
-        };
-      },
+      prepare: ({ userName, userPassword }) => ({ payload: { userName, userPassword } }),
     },
     userLogOut(state) {
       state.user.userName = null;

@@ -4,21 +4,25 @@ const ButtonToTop = () => {
   const [toTop, setToTop] = React.useState(false);
   React.useEffect(() => {
     const showBtn = () => {
-      window.scrollY > 200 ? setToTop(true) : setToTop(false);
+      if (window.scrollY > 200) {
+        setToTop(true);
+      } else {
+        setToTop(false);
+      }
     };
     window.addEventListener('scroll', showBtn);
     return () => window.removeEventListener('scroll', showBtn);
   }, []);
-  const scrollToTop = () => {
+  const scrollToTop = React.useCallback(() => {
     window.scrollTo({
       top: 0,
       behavior: 'smooth',
     });
-  };
+  }, []);
   return toTop ? (
-    <div className="toTop" onClick={scrollToTop}>
-      <i className="fa-solid fa-circle-arrow-up"></i>
-    </div>
+    <button type='button' className='toTop' onClick={scrollToTop}>
+      <i className='fa-solid fa-circle-arrow-up' />
+    </button>
   ) : null;
 };
 

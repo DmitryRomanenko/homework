@@ -1,9 +1,7 @@
 import React from 'react';
 import { useDispatch } from 'react-redux';
-
-import { userLogIn } from '../store/slices/userSlice';
-
 import { useNavigate } from 'react-router-dom';
+import { userLogIn } from '../store/slices/userSlice';
 
 const LoginPage = () => {
   const [userName, setUserName] = React.useState('');
@@ -13,7 +11,7 @@ const LoginPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (userName != '' && userPassword != '') {
+    if (userName !== '' && userPassword !== '') {
       dispatch(userLogIn({ userName, userPassword }));
       navigate('/', { replace: true });
     }
@@ -22,20 +20,17 @@ const LoginPage = () => {
   const onClickSetPassword = (e) => setUserPassword(e.target.value);
 
   return (
-    <div className="login">
-      <div className="login__block">
-        <i className="fa-solid fa-user login__icon"></i>
-        <h1 className="login__title">Log In</h1>
+    <div className='login'>
+      <div className='login__block'>
+        <i className='fa-solid fa-user login__icon' />
+        <h1 className='login__title'>Log In</h1>
       </div>
-      <form className="login__form" onSubmit={handleSubmit}>
-        <input placeholder="Username" onChange={onClickSetName} type="text" value={userName} />
-        <input
-          placeholder="Password"
-          onChange={onClickSetPassword}
-          type="password"
-          value={userPassword}
-        />
-        <button className="login__btn">Submit</button>
+      <form className='login__form' onSubmit={handleSubmit}>
+        <input placeholder='Username' onChange={onClickSetName} type='text' value={userName} />
+        <input placeholder='Password' onChange={onClickSetPassword} type='password' value={userPassword} />
+        <button type='submit' className='login__btn'>
+          Submit
+        </button>
       </form>
     </div>
   );

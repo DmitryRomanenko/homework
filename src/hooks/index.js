@@ -1,5 +1,4 @@
 import React from 'react';
-
 import { useDispatch } from 'react-redux';
 
 export const useModal = (modalChange, close, id) => {
@@ -17,15 +16,18 @@ export const useModal = (modalChange, close, id) => {
         setTitle('');
       }
     },
-    [title, description],
+    [title, dispatch, id, close, modalChange, description],
   );
 
-  const modalClose = React.useCallback((e) => {
-    e.preventDefault();
-    close();
-    setDescription('');
-    setTitle('');
-  }, []);
+  const modalClose = React.useCallback(
+    (e) => {
+      e.preventDefault();
+      close();
+      setDescription('');
+      setTitle('');
+    },
+    [close],
+  );
 
   return { title, setTitle, description, setDescription, modalClose, modalConfirm };
 };

@@ -1,7 +1,6 @@
 import React from 'react';
-
+import { nanoid } from '@reduxjs/toolkit';
 import { useSelector, useDispatch } from 'react-redux';
-
 import { setSort, selectSortItems, selectActiveSortItem } from '../../store/slices/optionSlice';
 
 const Sort = () => {
@@ -13,11 +12,12 @@ const Sort = () => {
 
   return (
     <>
-      {sortItems.map((item, i) => {
+      {sortItems.map((item) => {
+        const id = nanoid();
         const isActive = activeSortItem.name === item.name;
         const activeClass = isActive ? 'todo__btn todo__btn-active' : 'todo__btn';
         return (
-          <button key={i} className={activeClass} onClick={() => onClickSetSort(item)}>
+          <button type='button' key={id} className={activeClass} onClick={() => onClickSetSort(item)}>
             {item.name}
           </button>
         );

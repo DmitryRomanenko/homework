@@ -1,9 +1,7 @@
 import React from 'react';
-
+import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
-
 import { Navigate } from 'react-router-dom';
-
 import { selectUserName, selectUserPassword } from '../../store/slices/userSlice';
 
 const UserAuth = ({ children }) => {
@@ -12,7 +10,11 @@ const UserAuth = ({ children }) => {
   if (userName && userPassword) {
     return children;
   }
-  return <Navigate to="/login" />;
+  return <Navigate to='/login' />;
+};
+
+UserAuth.propTypes = {
+  children: PropTypes.element.isRequired,
 };
 
 export default UserAuth;
