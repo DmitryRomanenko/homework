@@ -9,15 +9,19 @@ const LoginPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (userName !== '' && userPassword !== '') {
-      dispatch(userLogIn({ userName, userPassword }));
-      navigate('/', { replace: true });
-    }
-  };
-  const onClickSetName = (e) => setUserName(e.target.value);
-  const onClickSetPassword = (e) => setUserPassword(e.target.value);
+  const handleSubmit = React.useCallback(
+    (e) => {
+      e.preventDefault();
+      if (userName !== '' && userPassword !== '') {
+        dispatch(userLogIn({ userName, userPassword }));
+        navigate('/', { replace: true });
+      }
+    },
+    [dispatch, navigate, userName, userPassword],
+  );
+
+  const onClickSetName = React.useCallback((e) => setUserName(e.target.value), []);
+  const onClickSetPassword = React.useCallback((e) => setUserPassword(e.target.value), []);
 
   return (
     <div className='login'>
