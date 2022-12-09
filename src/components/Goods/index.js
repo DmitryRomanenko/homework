@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 import {
   fetchAllGoods,
   addProduct,
@@ -11,57 +11,64 @@ import GoodsForm from '../GoodsForm';
 import GoodsItem from '../GoodsItem';
 import Spinner from '../Spinner';
 
-const Goods = () => {
-  const [add, setAdd] = React.useState('');
-  const [editId, setEdit] = React.useState('');
-  const goods = useSelector(selectSortedGoods);
-  const status = useSelector(selectGoodsStatus);
-  const prefill = goods.find((item) => item.id === editId);
-  const dispatch = useDispatch();
+class Goods extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      add: '',
+      editId: '',
+      prefill: '',
+    };
+  }
 
-  React.useEffect(() => {
-    dispatch(fetchAllGoods());
-  }, [dispatch]);
+  componentDidMount() {
+    this.props.fetchAllGoods();
+  }
 
-  const onCLickSetAdd = React.useCallback(() => {
-    setAdd('open');
-  }, []);
-  const onCLickReload = React.useCallback(() => dispatch(fetchAllGoods()), [dispatch]);
+  onCLickSetAdd = () => {
+    this.setState({ add: 'open' });
+  };
 
-  const postData = React.useCallback(
-    (title, description, weight) => dispatch(addProduct({ title, description, weight })).unwrap(),
-    [dispatch],
-  );
-  const changeData = React.useCallback(
-    (title, description, weight) => dispatch(putProduct({ title, description, weight, id: editId })).unwrap(),
-    [dispatch, editId],
-  );
+  onCLickReload = () => this.props.fetchAllGoods();
 
-  const createContent = () => {
-    switch (status) {
+  setEdit = (arg) => {
+    this.setState({ editId: arg, prefill: this.props.goods.find((item) => item.id === arg) });
+  };
+
+  setAdd = (arg) => {
+    this.setState({ add: arg });
+  };
+
+  postData = (title, description, weight) => this.props.addProduct({ title, description, weight }).unwrap();
+
+  changeData = (title, description, weight) =>
+    this.props.putProduct({ title, description, weight, id: this.state.editId }).unwrap();
+
+  createContent = () => {
+    switch (this.props.status) {
       case 'loading':
         return <Spinner />;
       case 'confirm':
-        return goods.map((data) => {
-          if (data.id === editId) {
+        return this.props.goods.map((data) => {
+          if (data.id === this.state.editId) {
             return (
               <GoodsForm
                 text='Edit'
                 key={data.id}
-                closeItem={setEdit}
-                item={editId}
-                handleSubmit={changeData}
-                prefill={prefill}
+                closeItem={this.setEdit}
+                item={this.state.editId}
+                handleSubmit={this.changeData}
+                prefill={this.state.prefill}
               />
             );
           }
-          return <GoodsItem key={data.id} data={data} setEdit={setEdit} />;
+          return <GoodsItem key={data.id} data={data} setEdit={this.setEdit} />;
         });
       case 'error':
         return (
           <div className='fetchError'>
             <h2 className='fetchError-text'>Something went wrong</h2>
-            <button className='fetchError-btn' type='button' onClick={onCLickReload}>
+            <button className='fetchError-btn' type='button' onClick={this.onCLickReload}>
               Reload
             </button>
           </div>
@@ -71,20 +78,34 @@ const Goods = () => {
     }
   };
 
-  return (
-    <>
-      <div className='container'>
-        <div className='goods__wrapper'>{createContent()}</div>
-      </div>
-      {add ? (
-        <GoodsForm text='Add' item={add} closeItem={setAdd} handleSubmit={postData} />
-      ) : (
-        <button onClick={onCLickSetAdd} className='addButton' type='button'>
-          <i className='fa-solid fa-square-plus' />
-        </button>
-      )}
-    </>
-  );
-};
+  render() {
+    return (
+      <>
+        <div className='container'>
+          <div className='goods__wrapper'>{this.createContent()}</div>
+        </div>
+        {this.state.add ? (
+          <GoodsForm text='Add' item={this.state.add} closeItem={this.setAdd} handleSubmit={this.postData} />
+        ) : (
+          <button onClick={this.onCLickSetAdd} className='addButton' type='button'>
+            <i className='fa-solid fa-square-plus' />
+          </button>
+        )}
+      </>
+    );
+  }
+}
 
-export default Goods;
+const mapStateToProps = (state) => ({
+  goods: selectSortedGoods(state),
+  status: selectGoodsStatus(state),
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  fetchAllGoods: () => dispatch(fetchAllGoods()),
+  addProduct: ({ title, description, weight }) => dispatch(addProduct({ title, description, weight })),
+  putProduct: ({ title, description, weight, id: editId }) =>
+    dispatch(putProduct({ title, description, weight, id: editId })),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Goods);

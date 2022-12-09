@@ -18,12 +18,15 @@
       }
     ],
     "no-param-reassign": ["error", { "props": true, "ignorePropertyModificationsFor": ["state"] }],
-    "react/function-component-definition": [2, { "namedComponents": "arrow-function" }],
+    "react/function-component-definition": "off",
     "import/order": ["error", { "newlines-between": "never" }],
     "react/prop-types": "off",
     "no-unused-vars": "warn",
     "jsx-a11y/no-noninteractive-element-interactions": "off",
     "jsx-a11y/click-events-have-key-events": "off",
-    "jsx-a11y/no-static-element-interactions": "off"
+    "jsx-a11y/no-static-element-interactions": "off",
+    "react/prefer-stateless-function": "off",
+    "react/destructuring-assignment": "off",
+    "react/jsx-props-no-spreading": "off"
   }
 }

@@ -1,38 +1,49 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 import { selectSearchVal, setSearchVal } from '../../store/slices/goodsSlice';
 
-const Search = () => {
-  const searchVal = useSelector(selectSearchVal);
-  const searchInput = React.useRef(null);
-  const dispatch = useDispatch();
+class Search extends React.Component {
+  constructor(props) {
+    super(props);
+    this.searchInput = React.createRef(null);
+  }
 
-  const setSearch = React.useCallback((e) => dispatch(setSearchVal(e.target.value)), [dispatch]);
+  setSearch = (e) => this.props.setSearchVal(e.target.value);
 
-  const onClickReset = React.useCallback(() => {
-    dispatch(setSearchVal(''));
-    searchInput.current.focus();
-  }, [dispatch]);
+  onClickReset = () => {
+    this.props.setSearchVal('');
+    this.searchInput.current.focus();
+  };
 
-  return (
-    <div className='header__search'>
-      <label className='header__search-icon' htmlFor='search'>
-        <i className='fa-solid fa-magnifying-glass' />
-      </label>
-      <input
-        ref={searchInput}
-        onChange={setSearch}
-        value={searchVal}
-        id='search'
-        placeholder='Type to search'
-        type='text'
-        className='header__search-input'
-      />
-      <span onClick={onClickReset} className='header__search-remove'>
-        {searchVal ? <i className='fa-regular fa-circle-xmark' /> : null}
-      </span>
-    </div>
-  );
-};
+  render() {
+    return (
+      <div className='header__search'>
+        <label className='header__search-icon' htmlFor='search'>
+          <i className='fa-solid fa-magnifying-glass' />
+        </label>
+        <input
+          ref={this.searchInput}
+          onChange={this.setSearch}
+          value={this.props.searchVal}
+          id='search'
+          placeholder='Type to search'
+          type='text'
+          className='header__search-input'
+        />
+        <span onClick={this.onClickReset} className='header__search-remove'>
+          {this.props.searchVal ? <i className='fa-regular fa-circle-xmark' /> : null}
+        </span>
+      </div>
+    );
+  }
+}
 
-export default Search;
+const mapStateToProps = (state) => ({
+  searchVal: selectSearchVal(state),
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  setSearchVal: (searchVal) => dispatch(setSearchVal(searchVal)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Search);
