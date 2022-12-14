@@ -1,19 +1,24 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
-import { deleteProductById } from '../../store/slices/goodsSlice';
-import { useStatus } from '../../hooks';
+import { deleteProductById } from '../../store/slices/goods/asyncActions';
+import { useStatus, useAppDispatch } from '../../hooks';
+import { IProduct, ResStatus } from '../../store/slices/goods/types';
 
-const GoodsItem = ({ data: { title, weight, description, id }, setEdit }) => {
+interface IGoodsItemProps {
+  data: IProduct;
+  setEdit: React.Dispatch<React.SetStateAction<string>>;
+}
+
+const GoodsItem: React.FC<IGoodsItemProps> = ({ data: { title, weight, description, id }, setEdit }) => {
   const { itemStatus, setItemStatus, isLoading, isError } = useStatus();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const onCLickEdit = React.useCallback(() => setEdit(id), [id, setEdit]);
 
   const onClickDelete = React.useCallback(() => {
-    setItemStatus('loading');
+    setItemStatus(ResStatus.LOADING);
     dispatch(deleteProductById(id))
       .unwrap()
-      .catch(() => setItemStatus('error'));
+      .catch(() => setItemStatus(ResStatus.ERROR));
   }, [dispatch, id, setItemStatus]);
 
   return (
@@ -30,14 +35,14 @@ const GoodsItem = ({ data: { title, weight, description, id }, setEdit }) => {
       <div className='goods__actions'>
         <button
           onClick={onCLickEdit}
-          disabled={itemStatus === 'loading'}
+          disabled={itemStatus === ResStatus.LOADING}
           className={`goods__btn ${isLoading}`}
           type='button'>
           Edit
         </button>
         <button
           onClick={onClickDelete}
-          disabled={itemStatus === 'loading'}
+          disabled={itemStatus === ResStatus.LOADING}
           className={`goods__btn goods__btn_red ${isLoading}`}
           type='button'>
           Delete

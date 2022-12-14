@@ -1,7 +1,16 @@
 import React from 'react';
 import { useStatus } from '../../hooks';
+import { IProduct, ResStatus } from '../../store/slices/goods/types';
 
-const GoodsForm = ({ item, closeItem, handleSubmit, prefill, text }) => {
+interface IGoodsFormProps {
+  item: string;
+  closeItem: React.Dispatch<React.SetStateAction<string>>;
+  handleSubmit: (title: string, description: string, weight: string) => Promise<IProduct>;
+  prefill?: IProduct;
+  text: 'Add' | 'Edit';
+}
+
+const GoodsForm: React.FC<IGoodsFormProps> = ({ item, closeItem, handleSubmit, prefill, text }) => {
   const [title, setTitle] = React.useState('');
   const [description, setDescription] = React.useState('');
   const [weight, setWeight] = React.useState('');
@@ -17,12 +26,15 @@ const GoodsForm = ({ item, closeItem, handleSubmit, prefill, text }) => {
     }
   }, [prefill]);
 
-  const onChangeTitle = React.useCallback((e) => setTitle(e.target.value), []);
-  const onChangeDescr = React.useCallback((e) => setDescription(e.target.value), []);
-  const onChangeWeight = React.useCallback((e) => setWeight(e.target.value), []);
+  const onChangeTitle = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => setTitle(e.target.value), []);
+  const onChangeDescr = React.useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => setDescription(e.target.value),
+    [],
+  );
+  const onChangeWeight = React.useCallback((e: React.ChangeEvent<HTMLInputElement>) => setWeight(e.target.value), []);
 
   const onCLickCLose = React.useCallback(
-    (e) => {
+    (e: React.MouseEvent<HTMLButtonElement>) => {
       e.preventDefault();
       closeItem('');
       closeItem('');
@@ -34,20 +46,20 @@ const GoodsForm = ({ item, closeItem, handleSubmit, prefill, text }) => {
   );
 
   const onCLickAddProduct = React.useCallback(
-    (e) => {
+    (e: React.MouseEvent<HTMLButtonElement>) => {
       e.preventDefault();
       if (title && description && weight) {
         if (title !== prefill?.title || description !== prefill?.description || weight !== prefill?.weight) {
-          setItemStatus('loading');
+          setItemStatus(ResStatus.LOADING);
           handleSubmit(title, description, weight)
             .then(() => {
-              setItemStatus('confirm');
+              setItemStatus(ResStatus.CONFIRM);
               closeItem('');
               setTitle('');
               setDescription('');
               setWeight('');
             })
-            .catch(() => setItemStatus('error'));
+            .catch(() => setItemStatus(ResStatus.ERROR));
         }
       }
     },
@@ -88,14 +100,14 @@ const GoodsForm = ({ item, closeItem, handleSubmit, prefill, text }) => {
         </div>
         <div className='goods__actions'>
           <button
-            disabled={itemStatus === 'loading'}
+            disabled={itemStatus === ResStatus.LOADING}
             onClick={onCLickAddProduct}
             type='submit'
             className={`goods__btn ${isLoading}`}>
             {text}
           </button>
           <button
-            disabled={itemStatus === 'loading'}
+            disabled={itemStatus === ResStatus.LOADING}
             onClick={onCLickCLose}
             className={`goods__btn goods__btn_red ${isLoading}`}
             type='submit'>

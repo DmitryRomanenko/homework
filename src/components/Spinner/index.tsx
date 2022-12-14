@@ -3,6 +3,8 @@ import React from 'react';
 const Spinner = () => (
   <svg
     className='spinner'
+    viewBox='0 0 100 100'
+    preserveAspectRatio='xMidYMid'
     style={{
       margin: '0 auto',
       background: 'none',
@@ -10,8 +12,6 @@ const Spinner = () => (
       shapeRendering: 'auto',
       width: '100px',
       height: '100px',
-      viewBox: '0 0 100 100',
-      preserveAspectRatio: 'xMidYMid',
     }}>
     <g transform='translate(50 42)'>
       <g transform='scale(0.8)'>

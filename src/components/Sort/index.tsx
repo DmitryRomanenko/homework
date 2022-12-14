@@ -1,18 +1,21 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { nanoid } from '@reduxjs/toolkit';
-import { selectActiveSort, selectSortItems, setActiveSort } from '../../store/slices/goodsSlice';
+import { ISortItem } from '../../store/slices/goods/types';
+import { setActiveSort } from '../../store/slices/goods/slice';
+import { selectActiveSort, selectSortItems } from '../../store/slices/goods/selectors';
+import { useAppDispatch, useAppSelector } from '../../hooks';
 
 const Sort = () => {
   const [popUp, setPopUp] = React.useState(false);
-  const activeSort = useSelector(selectActiveSort);
-  const sortItmes = useSelector(selectSortItems);
-  const dispatch = useDispatch();
-  const sortItemRef = React.useRef(null);
+  const activeSort = useAppSelector(selectActiveSort);
+  const sortItmes = useAppSelector(selectSortItems);
+  const dispatch = useAppDispatch();
+  const sortItemRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
-    const onCLickClose = (e) => {
-      if (!e.path.includes(sortItemRef.current)) {
+    const onCLickClose = (e: MouseEvent) => {
+      const event = e as MouseEvent & { path: Node[] };
+      if (sortItemRef.current && !event.path.includes(sortItemRef.current)) {
         setPopUp(false);
       }
     };
@@ -23,7 +26,7 @@ const Sort = () => {
   const onClickSetPopUp = React.useCallback(() => setPopUp(!popUp), [popUp]);
 
   const onClickSetSort = React.useCallback(
-    (item) => {
+    (item: ISortItem) => {
       dispatch(setActiveSort(item));
       setPopUp(false);
     },

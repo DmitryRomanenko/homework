@@ -1,17 +1,21 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { selectSearchVal, setSearchVal } from '../../store/slices/goodsSlice';
+import { selectSearchVal } from '../../store/slices/goods/selectors';
+import { setSearchVal } from '../../store/slices/goods/slice';
+import { useAppDispatch, useAppSelector } from '../../hooks';
 
 const Search = () => {
-  const searchVal = useSelector(selectSearchVal);
-  const searchInput = React.useRef(null);
-  const dispatch = useDispatch();
+  const searchVal = useAppSelector(selectSearchVal);
+  const searchInput = React.useRef<HTMLInputElement>(null);
+  const dispatch = useAppDispatch();
 
-  const setSearch = React.useCallback((e) => dispatch(setSearchVal(e.target.value)), [dispatch]);
+  const setSearch = React.useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => dispatch(setSearchVal(e.target.value)),
+    [dispatch],
+  );
 
   const onClickReset = React.useCallback(() => {
     dispatch(setSearchVal(''));
-    searchInput.current.focus();
+    searchInput.current?.focus();
   }, [dispatch]);
 
   return (
